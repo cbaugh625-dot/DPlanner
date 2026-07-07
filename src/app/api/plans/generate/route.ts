@@ -44,7 +44,7 @@ export async function POST(req: Request) {
 
     const [institution, student, courses] = await Promise.all([
       getInstitution(body.institutionId),
-      getStudent(body.studentId),
+      getStudent(body.studentId, body.institutionId),
       getCoursesForInstitution(body.institutionId),
     ]);
     if (!institution) {
@@ -59,7 +59,10 @@ export async function POST(req: Request) {
       ...(body.secondaryProgramId ? [body.secondaryProgramId] : []),
       ...(body.minorProgramIds ?? []),
     ];
-    const programsWithCats = await getProgramsWithCategories(programIds);
+    const programsWithCats = await getProgramsWithCategories(
+      programIds,
+      body.institutionId,
+    );
     const program = programsWithCats.find((p) => p.id === body.programId);
     if (!program) {
       return NextResponse.json({ error: "Program not found" }, { status: 404 });

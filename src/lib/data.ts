@@ -88,12 +88,13 @@ export async function listProgramsForInstitution(institutionId: string) {
 
 export async function getProgramsWithCategories(
   programIds: string[],
+  /** Tenant guard: programs outside this institution are silently dropped. */
+  institutionId?: string,
 ): Promise<Program[]> {
   if (programIds.length === 0) return [];
-  const progRows = await db
-    .select()
-    .from(programs)
-    .where(inArray(programs.id, programIds));
+  const progRows = (
+    await db.select().from(programs).where(inArray(programs.id, programIds))
+  ).filter((p) => !institutionId || p.institutionId === institutionId);
   const catRows = await db
     .select()
     .from(requirementCategories)
@@ -214,9 +215,14 @@ export async function listStudentsForInstitution(institutionId: string) {
   }));
 }
 
-export async function getStudent(studentId: string): Promise<Student | null> {
+export async function getStudent(
+  studentId: string,
+  /** Tenant guard: returns null if the student belongs to another institution. */
+  institutionId?: string,
+): Promise<Student | null> {
   const rows = await db.select().from(students).where(eq(students.id, studentId));
   if (rows.length === 0) return null;
+  if (institutionId && rows[0].institutionId !== institutionId) return null;
   const s = rows[0];
   const creditRows = await db
     .select()

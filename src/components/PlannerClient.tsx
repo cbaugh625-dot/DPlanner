@@ -330,6 +330,12 @@ export function PlannerClient({
           >
             Pin this plan for comparison
           </button>
+          <button
+            onClick={() => window.print()}
+            className="rounded-full border border-slate-300 bg-white px-3 py-1 text-xs font-semibold text-slate-700 hover:border-slate-500"
+          >
+            Print / export PDF
+          </button>
         </div>
       )}
 
@@ -344,6 +350,12 @@ export function PlannerClient({
             className="rounded-full border border-slate-300 bg-white px-3 py-1 text-xs font-medium text-slate-700 hover:border-red-300 hover:text-red-700"
           >
             Unpin
+          </button>
+          <button
+            onClick={() => window.print()}
+            className="rounded-full border border-slate-300 bg-white px-3 py-1 text-xs font-semibold text-slate-700 hover:border-slate-500"
+          >
+            Print / export PDF
           </button>
         </div>
       )}
@@ -370,6 +382,12 @@ export function PlanPanel({
   const { response } = plan;
   return (
     <div className="space-y-3">
+      <div className="print-only border-b border-slate-300 pb-2">
+        <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+          DPlanner — Student-Athlete Course Plan · DEMO / SAMPLE DATA ONLY —
+          not a real student record
+        </p>
+      </div>
       <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
         {tag && (
           <span className="rounded bg-slate-200 px-2 py-0.5 text-xs font-bold uppercase tracking-wide text-slate-600">
@@ -409,6 +427,16 @@ export function PlanPanel({
         courseIndex={response.courseIndex}
         flags={response.flags}
       />
+      <div className="print-only border-t border-slate-300 pt-2">
+        <p className="text-[10px] leading-snug text-slate-600">
+          Eligibility results are decision-support only and must be confirmed
+          by the institution&apos;s compliance office against the current NCAA
+          manual. Rules vary by division and change by legislative cycle.
+          {response.ruleset && !response.ruleset.verified
+            ? ` The ${response.ruleset.division} ruleset used for this plan has NOT been verified by a compliance officer.`
+            : ""}
+        </p>
+      </div>
     </div>
   );
 }
