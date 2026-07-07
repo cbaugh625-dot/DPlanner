@@ -9,6 +9,7 @@ import {
 } from "@/lib/data";
 import { checkEligibility, sortFlags } from "@/lib/eligibility";
 import { generatePlan } from "@/lib/scheduler";
+import { checkAthleticLoad } from "@/lib/scheduler/athletics";
 import { parseTermLabel } from "@/lib/types";
 import type { GradTarget, Strategy } from "@/lib/types";
 
@@ -102,19 +103,24 @@ export async function POST(req: Request) {
       (s, c) => s + c.credits,
       0,
     );
-    const flags = ruleset
-      ? sortFlags(
-          checkEligibility({
-            terms: result.terms,
-            student: { currentCumulativeGpa: student.currentCumulativeGpa },
-            institution: { minGraduationGpa: institution.minGraduationGpa },
-            ruleset,
-            totalCreditsRequired: result.totalCreditsRequired,
-            incomingCreditHours,
-            incomingDegreeCredits: result.incomingDegreeCredits,
-          }),
-        )
+    const eligibilityFlags = ruleset
+      ? checkEligibility({
+          terms: result.terms,
+          student: { currentCumulativeGpa: student.currentCumulativeGpa },
+          institution: { minGraduationGpa: institution.minGraduationGpa },
+          ruleset,
+          totalCreditsRequired: result.totalCreditsRequired,
+          incomingCreditHours,
+          incomingDegreeCredits: result.incomingDegreeCredits,
+        })
       : [];
+    const athleticFlags = checkAthleticLoad(
+      result.terms,
+      athleticCalendar,
+      new Map(courses.map((c) => [c.id, c])),
+      { inSeasonMaxCredits: body.options?.inSeasonMaxCredits },
+    );
+    const flags = sortFlags([...eligibilityFlags, ...athleticFlags]);
 
     // Lightweight course index for rendering.
     const usedIds = new Set<string>(result.terms.flatMap((t) => t.courseIds));

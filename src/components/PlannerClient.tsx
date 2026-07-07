@@ -4,6 +4,8 @@ import { useCallback, useEffect, useState } from "react";
 import type { GradTarget, PlanFlag, Strategy } from "@/lib/types";
 import { PlanGrid, type CourseIndexEntry } from "./PlanGrid";
 import { EligibilityFlags, type RulesetSummary } from "./EligibilityFlags";
+import { AthleticCalendarPanel } from "./AthleticCalendarPanel";
+import type { AthleticCalendar } from "@/lib/types";
 import type { ScheduleResult } from "@/lib/scheduler";
 
 interface InstitutionRow {
@@ -52,7 +54,7 @@ export interface GenerateResponse {
   program: { id: string; name: string; degreeType: string };
   secondaryProgram: { id: string; name: string } | null;
   minors: { id: string; name: string }[];
-  athleticCalendar: unknown;
+  athleticCalendar: AthleticCalendar | null;
 }
 
 export interface GeneratedPlan {
@@ -310,6 +312,7 @@ export function PlanPanel({
           {response.result.dataErrors.join(" ")}
         </div>
       )}
+      <AthleticCalendarPanel calendar={response.athleticCalendar} />
       <EligibilityFlags flags={response.flags} ruleset={response.ruleset} />
       <PlanGrid
         terms={response.result.terms}
