@@ -83,10 +83,15 @@ export function generatePlan(req: ScheduleRequest): ScheduleResult {
     ...(req.minors ?? []),
   ];
 
+  const studyAbroadLabels = new Set(req.options?.studyAbroadTerms ?? []);
+  const studyAbroadCredits = req.options?.studyAbroadCredits ?? 12;
+  const genericBlockCredits = studyAbroadLabels.size * studyAbroadCredits;
+
   const resolved = resolveRequirements(
     programsToSatisfy,
     courseMap,
     req.student.incomingCredits,
+    genericBlockCredits,
   );
 
   // --- Prerequisite cycle detection (data error) ----------------------------
@@ -184,10 +189,18 @@ export function generatePlan(req: ScheduleRequest): ScheduleResult {
   const championshipTerms = new Set(
     req.athleticCalendar?.championshipTerms ?? [],
   );
+  // Generic study-abroad block credits, split across study-abroad terms.
+  const saTermCount = chosen.terms.filter((t) => t.studyAbroad).length;
+  const genericTotal = [...resolved.genericBlockApplications.values()].reduce(
+    (s, v) => s + v,
+    0,
+  );
+  const genericPerSaTerm = saTermCount > 0 ? genericTotal / saTermCount : 0;
+
   let cumulative = incomingDegreeCredits;
   const plannedTerms: PlannedTerm[] = [];
   chosen.terms.forEach((draft, i) => {
-    const totalCredits = draft.courseIds.reduce(
+    let totalCredits = draft.courseIds.reduce(
       (sum, id) => sum + (courseMap.get(id)?.credits ?? 0),
       0,
     );
@@ -196,6 +209,10 @@ export function generatePlan(req: ScheduleRequest): ScheduleResult {
         resolved.assignments.get(id),
         courseMap.get(id)?.credits ?? 0,
       );
+    }
+    if (draft.studyAbroad) {
+      totalCredits = studyAbroadCredits;
+      cumulative += Math.round(genericPerSaTerm);
     }
     plannedTerms.push({
       term: draft.term,
@@ -208,6 +225,7 @@ export function generatePlan(req: ScheduleRequest): ScheduleResult {
           ? Math.min(100, Math.round((cumulative / denominator) * 10000) / 100)
           : 0,
       inSeason: championshipTerms.has(draft.term.type),
+      studyAbroad: draft.studyAbroad,
     });
   });
 
@@ -215,6 +233,7 @@ export function generatePlan(req: ScheduleRequest): ScheduleResult {
   const trimmed = plannedTerms.filter(
     (t, i) =>
       t.courseIds.length > 0 ||
+      t.studyAbroad ||
       (isPrimaryTerm(t.term) &&
         plannedTerms.slice(i + 1).some((later) => later.courseIds.length > 0)),
   );
@@ -256,6 +275,7 @@ export function generatePlan(req: ScheduleRequest): ScheduleResult {
 interface TermDraft {
   term: Term;
   courseIds: string[];
+  studyAbroad?: boolean;
 }
 
 function assignToTerms(
@@ -296,10 +316,17 @@ function assignToTerms(
   const remainingCredits = () =>
     [...unscheduled].reduce((s, id) => s + (courseMap.get(id)?.credits ?? 0), 0);
 
+  const studyAbroadLabels = new Set(req.options?.studyAbroadTerms ?? []);
+
   for (let i = 0; i < seq.length; i++) {
     const term = seq[i];
     const cfg = termCfg.get(term.type);
     if (!cfg) continue;
+    // Study-abroad terms host a generic credit block, not catalog courses.
+    if (studyAbroadLabels.has(termLabel(term))) {
+      drafts.push({ term, courseIds: [], studyAbroad: true });
+      continue;
+    }
     const primary = isPrimaryTerm(term);
     const remainingPrimaries = seq
       .slice(i)

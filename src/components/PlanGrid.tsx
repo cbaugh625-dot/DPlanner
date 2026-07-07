@@ -103,7 +103,14 @@ function TermCard({
         )}
       </div>
       <ul className="divide-y divide-slate-100 text-sm">
-        {term.courseIds.length === 0 && (
+        {term.studyAbroad && (
+          <li className="px-3 py-2 text-sky-800 bg-sky-50 text-xs">
+            <span className="font-semibold">Study abroad</span> — generic{" "}
+            {term.totalCredits}-credit block applied against requirement
+            categories (no specific catalog courses).
+          </li>
+        )}
+        {term.courseIds.length === 0 && !term.studyAbroad && (
           <li className="px-3 py-2 text-slate-400 italic">No courses</li>
         )}
         {term.courseIds.map((id) => {

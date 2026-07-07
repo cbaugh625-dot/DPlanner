@@ -75,6 +75,12 @@ export function PlannerClient({
   const [studentId, setStudentId] = useState("");
   const [target, setTarget] = useState<GradTarget>("grad_4yr");
   const [strategy, setStrategy] = useState<Strategy>("balanced");
+  const [minorId, setMinorId] = useState("");
+  const [secondMajorId, setSecondMajorId] = useState("");
+  const [ptdDenominator, setPtdDenominator] = useState<"primary_only" | "combined">(
+    "primary_only",
+  );
+  const [studyAbroadTerm, setStudyAbroadTerm] = useState("");
   const [loadingMeta, setLoadingMeta] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -115,6 +121,12 @@ export function PlannerClient({
             studentId,
             target: useTarget,
             strategy: useStrategy,
+            secondaryProgramId: secondMajorId || null,
+            minorProgramIds: minorId ? [minorId] : [],
+            options: {
+              ptdDenominator,
+              studyAbroadTerms: studyAbroadTerm ? [studyAbroadTerm] : [],
+            },
           }),
         });
         const data = await res.json();
@@ -131,8 +143,39 @@ export function PlannerClient({
         setGenerating(false);
       }
     },
-    [institutionId, programId, studentId, target, strategy],
+    [
+      institutionId,
+      programId,
+      studentId,
+      target,
+      strategy,
+      secondMajorId,
+      minorId,
+      ptdDenominator,
+      studyAbroadTerm,
+    ],
   );
+
+  // Candidate study-abroad terms: primary terms of the plan window (skip
+  // the first year — students rarely go abroad as freshmen).
+  const selectedStudentForTerms = studentsList.find((s) => s.id === studentId);
+  const studyAbroadOptions: string[] = [];
+  if (selectedStudentForTerms) {
+    const m = selectedStudentForTerms.enrollmentStartTerm.match(/(\d{4})/);
+    const startYear = m ? parseInt(m[1], 10) : new Date().getFullYear();
+    const primaries: Record<GradTarget, number> = {
+      grad_3yr: 6,
+      grad_3_5yr: 7,
+      grad_4yr: 8,
+      grad_4_5yr: 9,
+      grad_5yr: 10,
+    };
+    for (let i = 2; i < primaries[target]; i++) {
+      const isFall = i % 2 === 0;
+      const year = startYear + (isFall ? i / 2 : (i + 1) / 2);
+      studyAbroadOptions.push(`${isFall ? "Fall" : "Spring"} ${year}`);
+    }
+  }
 
   const selectedStudent = studentsList.find((s) => s.id === studentId);
 
@@ -188,6 +231,50 @@ export function PlannerClient({
               value,
               label,
             }))}
+          />
+          <Select
+            label="Minor (optional)"
+            value={minorId}
+            onChange={setMinorId}
+            disabled={loadingMeta}
+            options={[
+              { value: "", label: "— none —" },
+              ...programs
+                .filter((p) => p.type === "minor")
+                .map((p) => ({ value: p.id, label: p.name })),
+            ]}
+          />
+          <Select
+            label="Second major (optional)"
+            value={secondMajorId}
+            onChange={setSecondMajorId}
+            disabled={loadingMeta}
+            options={[
+              { value: "", label: "— none —" },
+              ...programs
+                .filter((p) => p.type === "major" && p.id !== programId)
+                .map((p) => ({ value: p.id, label: p.name })),
+            ]}
+          />
+          {secondMajorId && (
+            <Select
+              label="PTD denominator (double major)"
+              value={ptdDenominator}
+              onChange={(v) => setPtdDenominator(v as "primary_only" | "combined")}
+              options={[
+                { value: "primary_only", label: "Primary major only" },
+                { value: "combined", label: "Combine both majors" },
+              ]}
+            />
+          )}
+          <Select
+            label="Study abroad (optional)"
+            value={studyAbroadTerm}
+            onChange={setStudyAbroadTerm}
+            options={[
+              { value: "", label: "— none —" },
+              ...studyAbroadOptions.map((t) => ({ value: t, label: t })),
+            ]}
           />
           <div className="flex items-end">
             <button
@@ -292,6 +379,9 @@ export function PlanPanel({
         <h2 className="text-lg font-bold text-slate-900">
           {response.student.displayName} — {response.program.name} (
           {response.program.degreeType})
+          {response.secondaryProgram && ` + ${response.secondaryProgram.name}`}
+          {response.minors.length > 0 &&
+            ` · Minor: ${response.minors.map((m) => m.name).join(", ")}`}
         </h2>
         <span className="text-sm text-slate-500">
           {TARGET_LABELS[plan.target]} · {STRATEGY_LABELS[plan.strategy]}

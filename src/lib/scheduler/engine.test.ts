@@ -417,3 +417,151 @@ describe("generatePlan — rollups", () => {
     expect(result.terms[result.terms.length - 1].cumulativeDegreePercent).toBe(100);
   });
 });
+
+describe("generatePlan — edge cases (Phase 6)", () => {
+  it("study abroad term hosts a generic credit block and reduces electives", () => {
+    // Program: 60cr core (all_of) + 60cr free electives (choose_n_credits).
+    const core: Course[] = [];
+    for (let i = 0; i < 20; i++) core.push(course(`CORE ${i}`));
+    const electives: Course[] = [];
+    for (let i = 0; i < 25; i++) electives.push(course(`ELEC ${i}`));
+    const catalog = [...core, ...electives];
+    const program = programOf(catalog, {
+      totalCreditsRequired: 120,
+      categories: [
+        {
+          id: "cat:test:core",
+          slug: "core",
+          name: "Core",
+          creditsRequired: 60,
+          ruleType: "all_of",
+          ruleValue: null,
+          sortOrder: 1,
+          courseIds: core.map((c) => c.id),
+        },
+        {
+          id: "cat:test:free",
+          slug: "free",
+          name: "Free Electives",
+          creditsRequired: 60,
+          ruleType: "choose_n_credits",
+          ruleValue: 60,
+          sortOrder: 2,
+          courseIds: electives.map((c) => c.id),
+        },
+      ],
+    });
+    const result = generatePlan(
+      makeRequest(catalog, {
+        program,
+        options: { studyAbroadTerms: ["Fall 2027"], studyAbroadCredits: 12 },
+      }),
+    );
+    expect(result.feasible).toBe(true);
+    const sa = result.terms.find(
+      (t) => t.term.type === "fall" && t.term.year === 2027,
+    );
+    expect(sa).toBeDefined();
+    expect(sa!.studyAbroad).toBe(true);
+    expect(sa!.courseIds).toEqual([]);
+    expect(sa!.totalCredits).toBe(12);
+    // 12 block credits replace 4 elective courses.
+    const electiveIds = new Set(electives.map((c) => c.id));
+    const scheduledElectives = result.terms
+      .flatMap((t) => t.courseIds)
+      .filter((id) => electiveIds.has(id));
+    expect(scheduledElectives.length * 3).toBe(60 - 12);
+    expect(result.terms[result.terms.length - 1].cumulativeDegreePercent).toBe(100);
+  });
+
+  it("double major shares gen-eds and the PTD denominator option changes accounting", () => {
+    const shared = [course("GEN 1"), course("GEN 2")];
+    const aCore = [course("AAA 1"), course("AAA 2")];
+    const bCore = [course("BBB 1"), course("BBB 2")];
+    const catalog = [...shared, ...aCore, ...bCore, ...genericCatalog().slice(0, 10)];
+    const majorA = programOf([], {
+      id: "program:a",
+      slug: "a",
+      totalCreditsRequired: 12,
+      categories: [
+        {
+          id: "cat:a:gen",
+          slug: "gen",
+          name: "Gen Ed",
+          creditsRequired: 6,
+          ruleType: "all_of",
+          ruleValue: null,
+          sortOrder: 1,
+          courseIds: shared.map((c) => c.id),
+        },
+        {
+          id: "cat:a:core",
+          slug: "core",
+          name: "A Core",
+          creditsRequired: 6,
+          ruleType: "all_of",
+          ruleValue: null,
+          sortOrder: 2,
+          courseIds: aCore.map((c) => c.id),
+        },
+      ],
+    });
+    const majorB = programOf([], {
+      id: "program:b",
+      slug: "b",
+      totalCreditsRequired: 12,
+      categories: [
+        {
+          id: "cat:b:gen",
+          slug: "gen",
+          name: "Gen Ed",
+          creditsRequired: 6,
+          ruleType: "all_of",
+          ruleValue: null,
+          sortOrder: 1,
+          courseIds: shared.map((c) => c.id),
+        },
+        {
+          id: "cat:b:core",
+          slug: "core",
+          name: "B Core",
+          creditsRequired: 6,
+          ruleType: "all_of",
+          ruleValue: null,
+          sortOrder: 2,
+          courseIds: bCore.map((c) => c.id),
+        },
+      ],
+    });
+    const primaryOnly = generatePlan(
+      makeRequest(catalog, {
+        program: majorA,
+        secondaryProgram: majorB,
+        options: { ptdDenominator: "primary_only" },
+      }),
+    );
+    const combined = generatePlan(
+      makeRequest(catalog, {
+        program: majorA,
+        secondaryProgram: majorB,
+        options: { ptdDenominator: "combined" },
+      }),
+    );
+    // Shared gen-eds scheduled exactly once.
+    const genCount = (r: typeof primaryOnly) =>
+      r.terms.flatMap((t) => t.courseIds).filter((id) =>
+        shared.some((c) => c.id === id),
+      ).length;
+    expect(genCount(primaryOnly)).toBe(2);
+    expect(genCount(combined)).toBe(2);
+    // Both majors' cores are present.
+    const allIds = new Set(primaryOnly.terms.flatMap((t) => t.courseIds));
+    for (const c of [...aCore, ...bCore]) expect(allIds.has(c.id)).toBe(true);
+    // Denominator option changes the accounting basis.
+    expect(primaryOnly.totalCreditsRequired).toBe(12);
+    expect(combined.totalCreditsRequired).toBe(24);
+    // Combined: shared courses count toward both majors' gen-ed buckets.
+    const lastCombined = combined.terms[combined.terms.length - 1];
+    expect(lastCombined.cumulativeDegreeCredits).toBe(24);
+  });
+});

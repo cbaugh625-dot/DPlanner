@@ -14,6 +14,12 @@ export interface ResolvedRequirements {
   satisfiedByIncoming: Map<string, CategoryAssignment[]>;
   /** categoryId → credits applied directly by category-level incoming credit. */
   categoryIncomingCredits: Map<string, number>;
+  /**
+   * categoryId → credits reserved for generic blocks (study abroad). These
+   * reduce course selection like incoming credit, but the credits are earned
+   * mid-plan (at the study-abroad term), not before term 1.
+   */
+  genericBlockApplications: Map<string, number>;
   /** Data problems (e.g. an elective pool that cannot be satisfied). */
   errors: string[];
 }
@@ -39,11 +45,33 @@ export function resolveRequirements(
   programsToSatisfy: Program[],
   courses: ReadonlyMap<string, Course>,
   incoming: IncomingCredit[],
+  /** Generic credits earned mid-plan (e.g. study-abroad blocks). */
+  genericBlockCredits = 0,
 ): ResolvedRequirements {
   const errors: string[] = [];
   const assignments = new Map<string, CategoryAssignment[]>();
   const satisfiedByIncoming = new Map<string, CategoryAssignment[]>();
   const categoryIncomingCredits = new Map<string, number>();
+
+  // Study-abroad style blocks map to requirement categories generically —
+  // reserve them against the most generic pools (highest sort order,
+  // choose_n_credits) of the primary program first.
+  const genericBlockApplications = new Map<string, number>();
+  {
+    let remaining = genericBlockCredits;
+    for (const program of programsToSatisfy) {
+      if (remaining <= 0) break;
+      const pools = [...program.categories]
+        .filter((c) => c.ruleType === "choose_n_credits")
+        .sort((a, b) => b.sortOrder - a.sortOrder);
+      for (const pool of pools) {
+        if (remaining <= 0) break;
+        const take = Math.min(remaining, pool.ruleValue ?? pool.creditsRequired);
+        genericBlockApplications.set(pool.id, take);
+        remaining -= take;
+      }
+    }
+  }
 
   const incomingCourseIds = new Set<string>();
   for (const ic of incoming) {
@@ -210,7 +238,9 @@ export function resolveRequirements(
       const a: CategoryAssignment = { programId: program.id, categoryId: cat.id };
       const used = consumed(program.id);
 
-      const incomingCatCredits = categoryIncomingCredits.get(cat.id) ?? 0;
+      const incomingCatCredits =
+        (categoryIncomingCredits.get(cat.id) ?? 0) +
+        (genericBlockApplications.get(cat.id) ?? 0);
       let neededCredits =
         cat.ruleType === "choose_n_credits"
           ? Math.max(0, (cat.ruleValue ?? cat.creditsRequired) - incomingCatCredits)
@@ -300,6 +330,7 @@ export function resolveRequirements(
     assignments,
     satisfiedByIncoming,
     categoryIncomingCredits,
+    genericBlockApplications,
     errors,
   };
 }

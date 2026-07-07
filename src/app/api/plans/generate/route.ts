@@ -120,6 +120,17 @@ export async function POST(req: Request) {
       new Map(courses.map((c) => [c.id, c])),
       { inSeasonMaxCredits: body.options?.inSeasonMaxCredits },
     );
+    if (secondaryProgram) {
+      eligibilityFlags.push({
+        term: null,
+        severity: "info",
+        ruleKey: "double_major_ptd_denominator",
+        message:
+          body.options?.ptdDenominator === "combined"
+            ? `Double major: percentage-of-degree is computed against the COMBINED requirements of both majors (${result.totalCreditsRequired} hours). The NCAA gives the institution discretion here — confirm the treatment with compliance.`
+            : `Double major: percentage-of-degree is computed against the PRIMARY major only (${result.totalCreditsRequired} hours). The NCAA gives the institution discretion here — confirm the treatment with compliance.`,
+      });
+    }
     const flags = sortFlags([...eligibilityFlags, ...athleticFlags]);
 
     // Lightweight course index for rendering.
