@@ -10,7 +10,7 @@ MATH 1550,prerequisite,,MATH 1022
 MATH 1552,prerequisite,,MATH 1550
 MATH 2057,prerequisite,,MATH 1552
 MATH 2065,prerequisite,,MATH 1552
-PHYS 2110,prerequisite,,MATH 1022
+PHYS 2110,prerequisite,,MATH 1022 OR MATH 1550
 PHYS 2110,corequisite,,MATH 1550
 PHYS 2113,prerequisite,,PHYS 2110 AND MATH 1552
 CE 2450,prerequisite,,PHYS 2110
