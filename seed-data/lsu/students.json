@@ -1,0 +1,54 @@
+{
+  "_note": "SEED-ONLY file (not part of the institution import template). All students are synthetic sample records for the demo.",
+  "students": [
+    {
+      "slug": "marcus-d",
+      "display_name": "Marcus D. (Sample)",
+      "sport": "Football",
+      "division": "D1",
+      "enrollment_start_term": "Fall 2025",
+      "current_cumulative_gpa": 2.8,
+      "incoming_credits": [
+        { "source": "AP", "satisfies_course_code": "MATH 1550", "credits": 4, "grade": null },
+        { "source": "AP", "satisfies_course_code": "ENGL 1001", "credits": 3, "grade": null }
+      ]
+    },
+    {
+      "slug": "jasmine-t",
+      "display_name": "Jasmine T. (Sample)",
+      "sport": "Softball",
+      "division": "D1",
+      "enrollment_start_term": "Fall 2025",
+      "current_cumulative_gpa": 3.4,
+      "incoming_credits": [
+        { "source": "dual_enrollment", "satisfies_course_code": "ENGL 1001", "credits": 3, "grade": "A" },
+        { "source": "dual_enrollment", "satisfies_course_code": "PSYC 2000", "credits": 3, "grade": "B" }
+      ]
+    },
+    {
+      "slug": "tyler-b",
+      "display_name": "Tyler B. (Sample)",
+      "sport": "Baseball",
+      "division": "D1",
+      "enrollment_start_term": "Fall 2025",
+      "current_cumulative_gpa": 2.05,
+      "incoming_credits": []
+    },
+    {
+      "slug": "aaliyah-w",
+      "display_name": "Aaliyah W. (Sample)",
+      "sport": "Women's Basketball",
+      "division": "D1",
+      "enrollment_start_term": "Fall 2025",
+      "current_cumulative_gpa": 2.5,
+      "incoming_credits": [
+        {
+          "source": "transfer",
+          "satisfies_requirement_category": { "program_slug": "spad-ba", "category_slug": "free-elect" },
+          "credits": 12,
+          "grade": "B"
+        }
+      ]
+    }
+  ]
+}

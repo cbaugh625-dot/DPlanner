@@ -1,0 +1,23 @@
+program_slug,slug,name,credits_required,rule_type,rule_value,sort_order
+me-bs,comp,Gen Ed – Composition,6,all_of,,1
+me-bs,comm,Gen Ed – Communication,3,all_of,,2
+me-bs,hum,Gen Ed – Humanities,6,choose_n_credits,6,3
+me-bs,socsci,Gen Ed – Social Sciences,6,choose_n_credits,6,4
+me-bs,math-core,Mathematics Core,14,all_of,,5
+me-bs,sci-core,Science Core,15,all_of,,6
+me-bs,engr-core,Engineering Core,18,all_of,,7
+me-bs,me-core,ME Major Core,27,all_of,,8
+me-bs,tech-elect,ME Technical Electives,6,choose_n_courses,2,9
+me-bs,free-elect,Free Electives,19,choose_n_credits,19,10
+spad-ba,comp,Gen Ed – Composition,6,all_of,,1
+spad-ba,comm,Gen Ed – Communication,3,all_of,,2
+spad-ba,math,Gen Ed – Mathematics,6,all_of,,3
+spad-ba,hum,Gen Ed – Humanities,6,choose_n_credits,6,4
+spad-ba,natsci,Gen Ed – Natural Sciences,6,choose_n_credits,6,5
+spad-ba,socsci,Gen Ed – Social Sciences,9,choose_n_credits,9,6
+spad-ba,bus-found,Business Foundation,3,all_of,,7
+spad-ba,major-core,Major Core,30,all_of,,8
+spad-ba,major-elect,Major Electives,9,choose_n_courses,3,9
+spad-ba,free-elect,Free Electives,42,choose_n_credits,42,10
+bus-minor,minor-core,Minor Core,9,all_of,,1
+bus-minor,minor-elect,Minor Electives,6,choose_n_courses,2,2

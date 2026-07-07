@@ -1,0 +1,54 @@
+{
+  "_note": "Eligibility rulesets are DATA, not code. Every ruleset ships verified:false and must be confirmed by a compliance officer against the current NCAA/NAIA manual before being trusted. Non-D1 rulesets are placeholders.",
+  "rulesets": [
+    {
+      "division": "D1",
+      "effective_date": "2024-08-01",
+      "verified": false,
+      "source_note": "Seeded from publicly documented 2024-25 NCAA DI Manual progress-toward-degree standards (Bylaw 14.4): 6 hrs/term, 24 annual (18 fall+spring), 40-60-80 PTD, declare major by 5th semester, GPA 90/95/100% of graduation minimum, 5-year clock. UNVERIFIED — confirm with compliance. NOTE: NCAA approved a June 2026 change moving DI toward five seasons of competition within the five-year clock (phasing in ~fall 2027); seasons_of_competition must be re-verified per effective date.",
+      "rules": {
+        "min_credits_per_term_for_next_term": 6,
+        "full_time_min_credits": 12,
+        "annual_hours_required": 24,
+        "annual_hours_fall_spring_only": 18,
+        "year1_hours_by_third_semester": 24,
+        "ptd_percent_by_year": { "3": 40, "4": 60, "5": 80 },
+        "declare_major_by_semester": 5,
+        "degree_applicable_only_from_semester": 5,
+        "gpa_percent_of_grad_min_by_year": { "2": 90, "3": 95, "4": 100 },
+        "eligibility_clock_years": 5,
+        "seasons_of_competition": 4
+      }
+    },
+    {
+      "division": "D2",
+      "effective_date": "2024-08-01",
+      "verified": false,
+      "source_note": "PLACEHOLDER — D2 does NOT use 40-60-80. It uses annual 24-hour + cumulative-GPA-by-hours thresholds and a 10-semester competition window. Sources conflict on the per-term hour minimum (6 vs 9). Fill from the current D2 manual before use.",
+      "rules": {
+        "full_time_min_credits": 12,
+        "annual_hours_required": 24,
+        "eligibility_clock_years": 10
+      }
+    },
+    {
+      "division": "D3",
+      "effective_date": "2024-08-01",
+      "verified": false,
+      "source_note": "PLACEHOLDER — D3 sets institutional standards (no national PTD minimums). Configure per-institution expectations from the current D3 manual / institutional policy before use.",
+      "rules": {
+        "full_time_min_credits": 12
+      }
+    },
+    {
+      "division": "NAIA",
+      "effective_date": "2024-08-01",
+      "verified": false,
+      "source_note": "PLACEHOLDER — NAIA progress rules (e.g. 24-hour rule) differ from NCAA. Fill from the current NAIA handbook before use.",
+      "rules": {
+        "full_time_min_credits": 12,
+        "annual_hours_required": 24
+      }
+    }
+  ]
+}

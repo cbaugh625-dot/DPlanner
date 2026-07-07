@@ -1,0 +1,42 @@
+course_code,type,min_grade,expression
+ENGL 2000,prerequisite,C,ENGL 1001
+CHEM 1201,prerequisite,,MATH 1021 OR MATH 1550
+CHEM 1202,prerequisite,,CHEM 1201
+BIOL 1202,prerequisite,,BIOL 1201
+SPAN 1102,prerequisite,,SPAN 1101
+CSC 1240,prerequisite,,MATH 1021 OR MATH 1022
+MATH 1022,prerequisite,,MATH 1021
+MATH 1550,prerequisite,,MATH 1022
+MATH 1552,prerequisite,,MATH 1550
+MATH 2057,prerequisite,,MATH 1552
+MATH 2065,prerequisite,,MATH 1552
+PHYS 2110,prerequisite,,MATH 1022
+PHYS 2110,corequisite,,MATH 1550
+PHYS 2113,prerequisite,,PHYS 2110 AND MATH 1552
+CE 2450,prerequisite,,PHYS 2110
+CE 2460,prerequisite,,CE 2450
+CE 3400,prerequisite,,CE 2450
+EE 2950,prerequisite,,PHYS 2113
+ME 2543,prerequisite,,MATH 1550
+ME 2733,prerequisite,,CHEM 1201
+ME 2334,prerequisite,,PHYS 2110 AND MATH 1552
+ME 3133,prerequisite,,ME 2334
+ME 3333,prerequisite,,CE 2460 AND MATH 2065
+ME 3433,prerequisite,,CE 3400 AND ME 2733
+ME 3633,prerequisite,,ME 3333
+ME 3834,prerequisite,,ME 2733
+ME 4133,prerequisite,,ME 3433
+ME 4243,prerequisite,,CE 2460 AND MATH 2065
+ME 4433,prerequisite,,CE 2460 AND MATH 2065
+ME 4573,prerequisite,,ME 2334
+ME 4621,prerequisite,,ME 3433 AND ME 3333
+ME 4622,prerequisite,,ME 4621
+FIN 3715,prerequisite,,ACCT 2001
+SPAD 3000,prerequisite,,SPAD 2000
+SPAD 3100,prerequisite,,SPAD 2000
+SPAD 3200,prerequisite,,SPAD 2000 AND ACCT 2001
+SPAD 3510,prerequisite,,SPAD 2000
+SPAD 4000,prerequisite,,SPAD 2510
+SPAD 4100,prerequisite,,SPAD 3100
+SPAD 4200,prerequisite,,SPAD 3000
+SPAD 4500,prerequisite,,SPAD 3000 AND SPAD 3510

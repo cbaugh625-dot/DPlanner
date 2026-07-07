@@ -1,0 +1,68 @@
+code,title,credits,description,difficulty,offered_fall,offered_spring,offered_summer,offered_winter,cadence
+ENGL 1001,English Composition I,3,College writing and rhetoric,2,true,true,true,false,every_year
+ENGL 2000,English Composition II,3,Argument and research writing,2,true,true,true,false,every_year
+HIST 1001,Western Civilization to 1500,3,,2,true,true,false,false,every_year
+HIST 1003,Western Civilization since 1500,3,,2,true,true,false,false,every_year
+CMST 1061,Fundamentals of Public Speaking,3,,1,true,true,true,false,every_year
+ARTS 1010,Introduction to Visual Arts,3,,1,true,true,false,false,every_year
+MUS 1751,Music Appreciation,3,,1,true,true,true,false,every_year
+PHIL 1000,Introduction to Philosophy,3,,2,true,true,false,false,every_year
+THTR 1020,Introduction to Theatre,3,,1,true,true,false,false,every_year
+SOCL 2001,Introductory Sociology,3,,2,true,true,true,false,every_year
+PSYC 2000,Introduction to Psychology,3,,1,true,true,true,false,every_year
+ECON 2030,Economic Principles,3,,3,true,true,true,false,every_year
+POLI 2051,American Government,3,,2,true,true,false,false,every_year
+GEOG 1001,Human Geography,3,,2,true,true,false,false,every_year
+ANTH 1001,Introduction to Anthropology,3,,2,true,true,true,false,every_year
+GEOL 1001,Physical Geology,3,,2,true,true,false,false,every_year
+ENVS 1126,Introduction to Environmental Sciences,3,,2,true,true,true,false,every_year
+BIOL 1201,Biology for Science Majors I,3,,3,true,true,false,false,every_year
+BIOL 1202,Biology for Science Majors II,3,,3,false,true,false,false,every_year
+CHEM 1201,General Chemistry I,3,,3,true,true,false,false,every_year
+CHEM 1202,General Chemistry II,3,,3,true,true,false,false,every_year
+SPAN 1101,Elementary Spanish I,4,,2,true,true,false,false,every_year
+SPAN 1102,Elementary Spanish II,4,,2,true,true,false,false,every_year
+CSC 1240,Computing for Data Analysis,3,,3,true,true,false,false,every_year
+MATH 1021,College Algebra,3,,2,true,true,true,false,every_year
+MATH 1022,Trigonometry,3,,2,true,true,true,false,every_year
+MATH 1550,Calculus I,4,,4,true,true,true,false,every_year
+MATH 1552,Calculus II,4,,4,true,true,true,false,every_year
+MATH 2057,Multidimensional Calculus,3,,4,true,true,false,false,every_year
+MATH 2065,Elementary Differential Equations,3,,4,true,true,false,false,every_year
+PHYS 2110,Physics I: Mechanics,3,Calculus-based mechanics,4,true,true,false,false,every_year
+PHYS 2113,Physics II: Electricity and Magnetism,3,,4,true,true,false,false,every_year
+CE 2450,Statics,3,,4,true,true,false,false,every_year
+CE 2460,Dynamics,3,,4,true,true,false,false,every_year
+CE 3400,Mechanics of Materials,3,,4,true,true,false,false,every_year
+EE 2950,Electric Circuits for Non-Majors,3,,4,true,true,false,false,every_year
+ME 2543,Simulation Methods for Mechanical Engineers,3,,3,true,true,false,false,every_year
+ME 2733,Materials of Engineering,3,,3,true,true,false,false,every_year
+ME 2334,Thermodynamics I,3,,4,true,true,false,false,every_year
+ME 3133,Thermodynamics II,3,,4,true,false,false,false,every_year
+ME 3333,Fluid Mechanics,3,,5,true,true,false,false,every_year
+ME 3433,Machine Design I,3,,4,true,false,false,false,every_year
+ME 3633,Heat Transfer,3,,5,false,true,false,false,every_year
+ME 3834,Manufacturing Processes,3,,3,false,true,false,false,every_year
+ME 4133,Machine Design II,3,,4,false,true,false,false,every_year
+ME 4243,Mechanical Control Systems,3,,5,true,false,false,false,every_year
+ME 4433,Mechanical Vibrations,3,,5,true,false,false,false,alternate_years_odd
+ME 4573,Alternative Energy Systems,3,,4,false,true,false,false,alternate_years_even
+ME 4621,Senior Design I,3,Capstone design part 1,4,true,false,false,false,every_year
+ME 4622,Senior Design II,3,Capstone design part 2,4,false,true,false,false,every_year
+ACCT 2001,Introductory Financial Accounting,3,,3,true,true,true,false,every_year
+MGT 3200,Principles of Management,3,,2,true,true,true,false,every_year
+MKT 3401,Principles of Marketing,3,,2,true,true,true,false,every_year
+BLAW 3201,Business Law,3,,3,true,true,false,false,every_year
+FIN 3715,Introduction to Finance,3,,3,true,true,false,false,every_year
+KIN 1600,Introduction to Kinesiology,3,,1,true,true,false,false,every_year
+KIN 2500,Human Anatomy for Kinesiology,3,,3,true,true,false,false,every_year
+SPAD 2000,Introduction to Sport Management,3,,1,true,true,true,false,every_year
+SPAD 2510,Sport in American Society,3,,2,true,true,false,false,every_year
+SPAD 3000,Sport Marketing,3,,2,true,true,false,false,every_year
+SPAD 3100,Sport Facility and Event Management,3,,2,true,false,false,false,every_year
+SPAD 3200,Sport Finance,3,,3,false,true,false,false,every_year
+SPAD 3510,Legal Aspects of Sport,3,,3,true,true,false,false,every_year
+SPAD 4000,Sport Governance and Policy,3,,3,true,false,false,false,every_year
+SPAD 4100,Athletic Administration,3,,3,false,true,false,false,every_year
+SPAD 4200,Sport Analytics,3,,3,false,true,false,false,alternate_years_even
+SPAD 4500,Internship in Sport Administration,3,Supervised field experience,2,true,true,true,false,every_year

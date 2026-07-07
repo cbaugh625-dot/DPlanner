@@ -1,0 +1,30 @@
+{
+  "slug": "lsu",
+  "name": "Louisiana State University",
+  "division": "D1",
+  "min_graduation_gpa": 2.0,
+  "default_degree_credits": 120,
+  "settings": {
+    "note": "Illustrative demo data — real-shaped but NOT LSU's live catalog."
+  },
+  "terms": [
+    {
+      "term_type": "fall",
+      "min_credits": 12,
+      "max_credits": 19,
+      "full_time_threshold": 12
+    },
+    {
+      "term_type": "spring",
+      "min_credits": 12,
+      "max_credits": 19,
+      "full_time_threshold": 12
+    },
+    {
+      "term_type": "summer",
+      "min_credits": 0,
+      "max_credits": 9,
+      "full_time_threshold": null
+    }
+  ]
+}
