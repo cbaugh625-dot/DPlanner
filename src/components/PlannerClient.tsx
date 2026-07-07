@@ -1,8 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import type { GradTarget, Strategy } from "@/lib/types";
+import type { GradTarget, PlanFlag, Strategy } from "@/lib/types";
 import { PlanGrid, type CourseIndexEntry } from "./PlanGrid";
+import { EligibilityFlags, type RulesetSummary } from "./EligibilityFlags";
 import type { ScheduleResult } from "@/lib/scheduler";
 
 interface InstitutionRow {
@@ -44,6 +45,8 @@ export const STRATEGY_LABELS: Record<Strategy, string> = {
 
 export interface GenerateResponse {
   result: ScheduleResult;
+  flags: PlanFlag[];
+  ruleset: RulesetSummary | null;
   courseIndex: Record<string, CourseIndexEntry>;
   student: StudentRow & { division: string };
   program: { id: string; name: string; degreeType: string };
@@ -307,9 +310,11 @@ export function PlanPanel({
           {response.result.dataErrors.join(" ")}
         </div>
       )}
+      <EligibilityFlags flags={response.flags} ruleset={response.ruleset} />
       <PlanGrid
         terms={response.result.terms}
         courseIndex={response.courseIndex}
+        flags={response.flags}
       />
     </div>
   );

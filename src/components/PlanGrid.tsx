@@ -1,6 +1,6 @@
 "use client";
 
-import type { PlannedTerm } from "@/lib/types";
+import type { PlanFlag, PlannedTerm } from "@/lib/types";
 import { termLabel } from "@/lib/types";
 
 export interface CourseIndexEntry {
@@ -13,9 +13,11 @@ export interface CourseIndexEntry {
 export function PlanGrid({
   terms,
   courseIndex,
+  flags = [],
 }: {
   terms: PlannedTerm[];
   courseIndex: Record<string, CourseIndexEntry>;
+  flags?: PlanFlag[];
 }) {
   if (terms.length === 0) {
     return (
@@ -41,7 +43,12 @@ export function PlanGrid({
           </h3>
           <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
             {yearTerms.map((t) => (
-              <TermCard key={t.termIndex} term={t} courseIndex={courseIndex} />
+              <TermCard
+                key={t.termIndex}
+                term={t}
+                courseIndex={courseIndex}
+                termFlags={flags.filter((f) => f.term === termLabel(t.term))}
+              />
             ))}
           </div>
         </div>
@@ -53,15 +60,25 @@ export function PlanGrid({
 function TermCard({
   term,
   courseIndex,
+  termFlags = [],
 }: {
   term: PlannedTerm;
   courseIndex: Record<string, CourseIndexEntry>;
+  termFlags?: PlanFlag[];
 }) {
   const optional = term.term.type === "summer" || term.term.type === "winter";
+  const hasError = termFlags.some((f) => f.severity === "error");
+  const hasWarning = termFlags.some((f) => f.severity === "warning");
   return (
     <div
       className={`rounded-md border bg-white shadow-sm ${
-        term.inSeason ? "border-orange-300" : "border-slate-200"
+        hasError
+          ? "border-red-400 ring-1 ring-red-200"
+          : hasWarning
+            ? "border-amber-400 ring-1 ring-amber-200"
+            : term.inSeason
+              ? "border-orange-300"
+              : "border-slate-200"
       }`}
     >
       <div
@@ -106,6 +123,25 @@ function TermCard({
           );
         })}
       </ul>
+      {termFlags.length > 0 && (
+        <div className="border-t border-slate-100 px-3 py-1.5 space-y-1">
+          {termFlags.map((f, i) => (
+            <p
+              key={i}
+              className={`text-[11px] leading-snug ${
+                f.severity === "error"
+                  ? "text-red-700"
+                  : f.severity === "warning"
+                    ? "text-amber-700"
+                    : "text-blue-700"
+              }`}
+              title={f.ruleKey}
+            >
+              ● {f.message}
+            </p>
+          ))}
+        </div>
+      )}
       <div className="border-t border-slate-200 px-3 py-1.5">
         <div className="flex items-center justify-between text-xs text-slate-500">
           <span className="font-semibold text-slate-700">

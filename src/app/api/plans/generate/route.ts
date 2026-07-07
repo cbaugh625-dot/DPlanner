@@ -1,12 +1,15 @@
 import { NextResponse } from "next/server";
 import {
+  getActiveRuleset,
   getAthleticCalendar,
   getCoursesForInstitution,
   getInstitution,
   getProgramsWithCategories,
   getStudent,
 } from "@/lib/data";
+import { checkEligibility, sortFlags } from "@/lib/eligibility";
 import { generatePlan } from "@/lib/scheduler";
+import { parseTermLabel } from "@/lib/types";
 import type { GradTarget, Strategy } from "@/lib/types";
 
 interface GenerateBody {
@@ -85,6 +88,34 @@ export async function POST(req: Request) {
       options: body.options,
     });
 
+    // Eligibility: always run the authoritative check against the active
+    // ruleset for the student's division + enrollment date.
+    let enrollmentDate = "2024-08-01";
+    try {
+      const t = parseTermLabel(student.enrollmentStartTerm);
+      enrollmentDate = `${t.year}-08-01`;
+    } catch {
+      // keep default
+    }
+    const ruleset = await getActiveRuleset(student.division, enrollmentDate);
+    const incomingCreditHours = student.incomingCredits.reduce(
+      (s, c) => s + c.credits,
+      0,
+    );
+    const flags = ruleset
+      ? sortFlags(
+          checkEligibility({
+            terms: result.terms,
+            student: { currentCumulativeGpa: student.currentCumulativeGpa },
+            institution: { minGraduationGpa: institution.minGraduationGpa },
+            ruleset,
+            totalCreditsRequired: result.totalCreditsRequired,
+            incomingCreditHours,
+            incomingDegreeCredits: result.incomingDegreeCredits,
+          }),
+        )
+      : [];
+
     // Lightweight course index for rendering.
     const usedIds = new Set<string>(result.terms.flatMap((t) => t.courseIds));
     for (const id of result.unscheduledCourseIds) usedIds.add(id);
@@ -104,6 +135,16 @@ export async function POST(req: Request) {
 
     return NextResponse.json({
       result,
+      flags,
+      ruleset: ruleset
+        ? {
+            id: ruleset.id,
+            division: ruleset.division,
+            effectiveDate: ruleset.effectiveDate,
+            verified: ruleset.verified,
+            sourceNote: ruleset.sourceNote,
+          }
+        : null,
       courseIndex,
       student: {
         id: student.id,
