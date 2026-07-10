@@ -5,7 +5,13 @@ import * as schema from "./schema";
 
 const url = process.env.DATABASE_URL;
 if (!url) {
-  throw new Error("DATABASE_URL is not set");
+  throw new Error(
+    "DATABASE_URL is not set. Fix: (1) create a file named .env in the " +
+      "project root containing:\n" +
+      "DATABASE_URL=postgres://dplanner:dplanner@localhost:5432/dplanner\n" +
+      "(copy .env.example), (2) start the database with `docker compose up -d db`, " +
+      "then (3) run `pnpm db:migrate` and `pnpm seed` once. See README.md → Getting started.",
+  );
 }
 
 // Reuse one connection pool across HMR reloads in dev.
